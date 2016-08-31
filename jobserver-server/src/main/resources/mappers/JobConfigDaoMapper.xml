@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weimob.jobserver.server.job.database.dao.JobConfigDao">
+    <sql id="jobConfigColums">
+        id AS "id",
+        job_class AS "jobClass",
+        method_name AS "methodName",
+        parameter_types AS "parameterTypes",
+        job_status AS "status",
+        job_type AS "jobType",
+        job_name AS "jobName",
+        cron_expression AS "cronExpression",
+        group_name AS "groupName",
+        lock_stratergy AS "lockStratergy",
+        system_id AS "systemId"
+    </sql>
+    <select id="get" resultType="com.weimob.jobserver.server.job.database.baen.JobConfigEntity">
+        SELECT
+        <include refid="jobConfigColums"/>
+        FROM job_config WHERE id = #{id}
+    </select>
+    <select id="getByEntity" resultType="com.weimob.jobserver.server.job.database.baen.JobConfigEntity">
+        SELECT
+        <include refid="jobConfigColums"/>
+        FROM job_config WHERE job_name = #{jobName} AND system_id = #{systemId}
+    </select>
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO job_config(
+        job_class,
+        method_name,
+        parameter_types,
+        job_status,
+        job_type,
+        job_name,
+        cron_expression,
+        group_name,
+        lock_stratergy,
+        system_id
+        ) VALUES (
+        #{jobClass},
+        #{methodName},
+        #{parameterTypes},
+        #{status},
+        #{jobType},
+        #{jobName},
+        #{cronExpression},
+        #{groupName},
+        #{lockStratergy},
+        #{systemId}
+        )
+    </insert>
+    <update id="update">
+        UPDATE job_config SET
+        job_class = #{jobClass}, method_name = #{methodName},parameter_types = #{parameterTypes},job_status =#{status},
+        job_type = #{jobType},job_name = #{jobName},cron_expression = #{cronExpression},group_name = #{groupName},
+        lock_stratergy = #{lockStratergy}
+        WHERE id = #{id}
+    </update>
+    <delete id="delete">
+        DELETE FROM job_config WHERE id=#{id}
+    </delete>
+    <select id="findList" resultType="com.weimob.jobserver.server.job.database.baen.JobConfigEntity">
+        SELECT
+        <include refid="jobConfigColums"/>
+        FROM job_config
+        <where>
+            <if test="jobClass !=null and jobClass !=''">
+                job_class = #{jobClass}
+            </if>
+            <if test="status !=null and status gt 0">
+                AND job_status =#{status}
+            </if>
+            <if test="jobType !=null and jobType gt 0">
+                AND job_type = #{jobType}
+            </if>
+            <if test="jobName !=null and jobName !=''">
+                AND job_name = #{jobName}
+            </if>
+            <if test="lockStratergy !=null and lockStratergy gt 0">
+                AND lock_stratergy = #{lockStratergy}
+            </if>
+            <if test="systemId !=null and systemId !=''">
+                AND system_id = #{systemId}
+            </if>
+        </where>
+    </select>
+    <select id="loadInitJobs" resultType="com.weimob.jobserver.server.job.database.baen.JobConfigEntity">
+        SELECT
+        <include refid="jobConfigColums"/>
+        FROM job_config WHERE job_status in(1,2,3) and job_type =3
+    </select>
+    <select id="findByIds" resultType="com.weimob.jobserver.server.job.database.baen.JobConfigEntity">
+        SELECT
+        <include refid="jobConfigColums"/>
+        FROM job_config
+        <where>
+            id in
+            <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                ${id}
+            </foreach>
+        </where>
+    </select>
+    <select id="findByIdAndParam" resultType="com.weimob.jobserver.server.job.database.baen.JobConfigEntity">
+        SELECT
+        <include refid="jobConfigColums"/>
+        FROM job_config
+        <where>
+            <if test="ids != null and ids.size() > 0">
+                AND id in
+                <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                    ${id}
+                </foreach>
+            </if>
+            <if test="jobConfig.jobClass !=null and jobConfig.jobClass !=''">
+                job_class = #{jobClass}
+            </if>
+            <if test="jobConfig.status !=null and jobConfig.status gt 0">
+                AND job_status =#{status}
+            </if>
+            <if test="jobConfig.jobType !=null and jobConfig.jobType gt 0">
+                AND job_type = #{jobType}
+            </if>
+            <if test="jobConfig.jobName !=null and jobConfig.jobName !=''">
+                AND job_name = #{jobName}
+            </if>
+            <if test="jobConfig.lockStratergy !=null and jobConfig.lockStratergy gt 0">
+                AND lock_stratergy = #{lockStratergy}
+            </if>
+            <if test="systemId !=null and systemId !=''">
+                AND system_id = #{systemId}
+            </if>
+        </where>
+    </select>
+    <select id="getSystemList" resultType="java.lang.String">
+        SELECT DISTINCT system_id AS "systemId" FROM job_config
+    </select>
+    <update id="updateSystemId">
+        UPDATE job_config SET system_id = #{newSystemId} where system_id = #{oldSystemId}
+    </update>
+    <select id="findAvaliableJobs" resultType="com.weimob.jobserver.server.job.database.baen.JobConfigEntity">
+        SELECT
+        <include refid="jobConfigColums"/>
+        FROM job_config WHERE job_status != 4
+        <if test="jobClass !=null and jobClass !=''">
+            AND job_class = #{jobClass}
+        </if>
+        <if test="jobType !=null and jobType gt 0">
+            AND job_type = #{jobType}
+        </if>
+        <if test="jobName !=null and jobName !=''">
+            AND job_name = #{jobName}
+        </if>
+        <if test="lockStratergy !=null and lockStratergy gt 0">
+            AND lock_stratergy = #{lockStratergy}
+        </if>
+        <if test="systemId !=null and systemId !=''">
+            AND system_id = #{systemId}
+        </if>
+    </select>
+</mapper>

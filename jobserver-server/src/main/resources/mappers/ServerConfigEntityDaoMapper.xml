@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weimob.jobserver.server.job.database.dao.ServerConfigEntityDao">
+    <sql id="serverEntityConfigColums">
+        id AS "id",
+        job_id AS "jobId",
+        client_name AS "clientName",
+        server_ip AS "serverIp",
+        server_port AS "serverPort",
+        weight AS "weight"
+    </sql>
+    <select id="get" resultType="com.weimob.jobserver.server.job.database.baen.ServerConfigEntity">
+        SELECT
+        <include refid="serverEntityConfigColums"/>
+        FROM server_configs WHERE id = #{id}
+    </select>
+    <select id="getByEntity" resultType="com.weimob.jobserver.server.job.database.baen.ServerConfigEntity">
+        SELECT
+        <include refid="serverEntityConfigColums"/>
+        FROM server_configs WHERE server_ip = #{serverIp} AND job_id = #{jobId}
+    </select>
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO server_configs(
+        job_id,
+        client_name,
+        server_ip,
+        server_port,
+        weight
+        ) VALUES (
+        #{jobId},
+        #{clientName},
+        #{serverIp},
+        #{serverPort},
+        #{weight}
+        )
+    </insert>
+    <update id="update">
+        UPDATE server_configs SET
+        job_id = #{jobId}, client_name = #{clientName},server_ip = #{serverIp},server_port =#{serverPort},
+        weight = #{weight}
+        WHERE id = #{id}
+    </update>
+    <delete id="delete">
+        DELETE FROM server_configs WHERE id=#{id}
+    </delete>
+    <select id="findList" resultType="com.weimob.jobserver.server.job.database.baen.ServerConfigEntity">
+        SELECT
+        <include refid="serverEntityConfigColums"/>
+        FROM server_configs
+        <where>
+            <if test="jobId !=null and jobId gt 0">
+                AND job_id =#{jobId}
+            </if>
+            <if test="clientName !=null and clientName !=''">
+                AND client_name = #{clientName}
+            </if>
+            <if test="serverIp !=null and serverIp != ''">
+                AND server_ip = #{serverIp}
+            </if>
+            <if test="serverPort !=null and serverPort gt 0">
+                AND server_port = #{systemId}
+            </if>
+        </where>
+    </select>
+    <select id="findByIds" resultType="com.weimob.jobserver.server.job.database.baen.ServerConfigEntity">
+        SELECT
+        <include refid="serverEntityConfigColums"/>
+        FROM server_configs
+        <where>
+            id in
+            <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                ${id}
+            </foreach>
+        </where>
+    </select>
+    <select id="countServers" resultType="java.lang.Integer">
+        SELECT count(1) from server_configs where job_id=#{jobId}
+    </select>
+</mapper>

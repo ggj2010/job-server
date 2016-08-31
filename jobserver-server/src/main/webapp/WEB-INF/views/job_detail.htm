@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- Head -->
+<head>
+    <meta charset="utf-8"/>
+    <title>JOB-SERVER|查看任务</title>
+    <meta name="description" content="simple and responsive tables"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="shortcut icon" href="${base}assets/img/favicon.png" type="image/x-icon">
+    <!--Basic Styles-->
+    <link href="${base}assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link id="bootstrap-rtl-link" href="" rel="stylesheet"/>
+    <link href="${base}assets/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="${base}assets/css/weather-icons.min.css" rel="stylesheet"/>
+    <!--Beyond styles-->
+    <link href="${base}assets/css/beyond.min.css" rel="stylesheet"/>
+    <link href="${base}assets/css/demo.min.css" rel="stylesheet"/>
+    <link href="${base}assets/css/typicons.min.css" rel="stylesheet"/>
+    <link href="${base}assets/css/animate.min.css" rel="stylesheet"/>
+    <link id="skin-link" href="" rel="stylesheet" type="text/css"/>
+    <script src="${base}assets/js/skins.min.js"></script>
+</head>
+<!-- /Head -->
+<!-- Body -->
+<body>
+<!-- Loading Container -->
+<div class="loading-container">
+    <div class="loading-progress">
+        <div class="rotator">
+            <div class="rotator">
+                <div class="rotator colored">
+                    <div class="rotator">
+                        <div class="rotator colored">
+                            <div class="rotator colored"></div>
+                            <div class="rotator"></div>
+                        </div>
+                        <div class="rotator colored"></div>
+                    </div>
+                    <div class="rotator"></div>
+                </div>
+                <div class="rotator"></div>
+            </div>
+            <div class="rotator"></div>
+        </div>
+        <div class="rotator"></div>
+    </div>
+</div>
+<!--  /Loading Container -->
+<!-- Navbar -->
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="navbar-container">
+            <!-- Navbar Barnd -->
+            <div class="navbar-header pull-left">
+                <span class="manage-logo">JOB-SERVER管理后台</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Navbar -->
+<!-- Main Container -->
+<div class="main-container container-fluid">
+    <!-- Page Container -->
+    <div class="page-container">
+        <!-- Page Sidebar -->
+        <div class="page-sidebar" id="sidebar">
+            <div class="sidebar-header-wrapper">
+            </div>
+            <ul class="nav sidebar-menu">
+                <li class="active open">
+                    <a href="#" class="menu-dropdown">
+                        <i class="menu-icon fa fa-table"></i>
+                        <span class="menu-text"> 任务管理 </span>
+                        <i class="menu-expand"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li>
+                            <a href="${base}monitor/jobList">
+                                <span class="menu-text">任务列表</span>
+                            </a>
+                        </li>
+                        <li class="active">
+                            <a href="${base}monitor/jobDetail/${(jobDetail.id)!''}">
+                                <span class="menu-text">JOB详情</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="${base}monitor/monitor">
+                        <i class="menu-icon fa fa-envelope-o"></i>
+                        <span class="menu-text"> 监控 </span>
+                        <i class="menu-expand"></i>
+                    </a>
+                </li>
+            </ul>
+            <!-- /Sidebar Menu -->
+        </div>
+        <!-- /Page Sidebar -->
+        <!-- Page Content -->
+        <div class="page-content">
+            <div class="page-header position-relative">
+                <div class="header-title">
+                    <h1>
+                        任务管理
+                        <small>
+                            <i class="fa fa-angle-right"></i>
+                            JOB详情
+                        </small>
+                    </h1>
+                </div>
+                <!--Header Buttons-->
+                <div class="header-buttons">
+                    <a class="sidebar-toggler" href="#">
+                        <i class="fa fa-arrows-h"></i>
+                    </a>
+                    <a class="refresh" id="refresh-toggler" href="">
+                        <i class="glyphicon glyphicon-refresh"></i>
+                    </a>
+                    <a class="fullscreen" id="fullscreen-toggler" href="#">
+                        <i class="glyphicon glyphicon-fullscreen"></i>
+                    </a>
+                </div>
+                <!--Header Buttons End-->
+            </div>
+            <!-- /Page Header -->
+            <!-- Page Body -->
+            <div class="page-body">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <div class="widget">
+                            <div class="widget-header  with-footer">
+                                <span class="widget-caption">任务详情：${(jobDetail.jobName)!''}</span>
+                            </div>
+                            <div class="widget-body">
+                                <div class="flip-scroll">
+                                    <table class="table table-bordered table-striped table-condensed flip-content">
+                                        <thead class="flip-content bordered-palegreen">
+                                        <tr>
+                                            <th class="numeric">clientName</th>
+                                            <th class="numeric">服务器IP</th>
+                                            <th class="numeric">端口</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <#if (jobDetail.serverConfigList)??>
+                                            <#list jobDetail.serverConfigList as server>
+                                                <tr>
+                                                    <td>${(server.clientName)!'无'}</td>
+                                                    <td>${(server.serverIp)!''}</td>
+                                                    <td>${(server.serverPort)!'无'}</td>
+                                                </tr>
+                                            </#list>
+                                        </#if>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${base}assets/js/jquery-2.0.3.min.js"></script>
+<script src="${base}assets/js/bootstrap.min.js"></script>
+<script src="${base}assets/js/beyond.min.js"></script>
+<script src="${base}assets/js/popMsg.js"></script>
+<script src="${base}assets/js/bootbox/bootbox.js"></script>
+<script>
+    $(function () {
+        $("#systemOption").change(function () {
+            var selectedVal = $(this).children('option:selected').attr("value");
+            $("#systemId").val(selectedVal);
+            $("#queryForm").submit();
+        })
+    })
+    function checkHeartBeat(element, serverId) {
+        $(element).button("loading");
+        $.ajax({
+            url: "${base}monitor/checkHeartBeat",
+            data: {"serverId": serverId},
+            type: "POST",
+            success: function (data) {
+                if (data.errorCode == 0) {
+                    ShowTip("操作成功", "success");
+                    location.reload();
+                } else {
+                    ShowTip("检测失败", "danger");
+                }
+                $(element).button("reset");
+            },
+            error: function () {
+                ShowTip("服务器错误", "danger");
+                $(element).button("reset");
+            }
+        })
+    }
+    function deleteServer(element, serverId, jobId) {
+        bootbox.confirm("确定暂停该服务器?", function (result) {
+            if (result) {
+                $(element).button("loading");
+                $.ajax({
+                    url: "${base}monitor/deleteServer",
+                    data: {"serverId": serverId, "jobId": jobId},
+                    type: "POST",
+                    success: function (data) {
+                        if (data.errorCode == 0) {
+                            ShowTip("操作成功", "success");
+                            location.reload();
+                        } else {
+                            ShowTip("检测失败", "danger");
+                        }
+                        $(element).button("reset");
+                    },
+                    error: function () {
+                        ShowTip("服务器错误", "danger");
+                        $(element).button("reset");
+                    }
+                })
+            }
+        })
+    }
+</script>
+</body>
+</html>

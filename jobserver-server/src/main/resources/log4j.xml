@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="Encoding" value="UTF-8"/>
+            <param name="ConversionPattern"
+                   value="[%-d{yyyy-MM-dd HH:mm:ss}] %p [%t] %c{1}.%M(%L) | %m%n"/>
+        </layout>
+    </appender>
+    <appender name="appAppender" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- <param name="Threshold" value="INFO" /> -->
+        <param name="File" value="/data/applogs/job-server/logs/app.log"/>
+        <param name="Encoding" value="UTF-8"/>
+        <!-- 50k为一个写单元 -->
+        <param name="bufferSize" value="51200"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[itgirl-server] [%-d] %p [%c:%L] %m%n"/>
+        </layout>
+    </appender>
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="appAppender"/>
+        <!--<appender-ref ref="CONSOLE"/>-->
+    </root>
+</log4j:configuration>

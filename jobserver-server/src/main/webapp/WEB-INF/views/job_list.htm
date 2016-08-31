@@ -1,0 +1,328 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- Head -->
+<head>
+    <meta charset="utf-8"/>
+    <title>JOB-SERVER</title>
+    <meta name="description" content="simple and responsive tables"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="shortcut icon" href="${base}assets/img/favicon.png" type="image/x-icon">
+    <!--Basic Styles-->
+    <link href="${base}assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link id="bootstrap-rtl-link" href="" rel="stylesheet"/>
+    <link href="${base}assets/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="${base}assets/css/weather-icons.min.css" rel="stylesheet"/>
+    <!--Beyond styles-->
+    <link href="${base}assets/css/beyond.min.css" rel="stylesheet"/>
+    <link href="${base}assets/css/demo.min.css" rel="stylesheet"/>
+    <link href="${base}assets/css/typicons.min.css" rel="stylesheet"/>
+    <link href="${base}assets/css/animate.min.css" rel="stylesheet"/>
+    <link id="skin-link" href="" rel="stylesheet" type="text/css"/>
+    <script src="${base}assets/js/skins.min.js"></script>
+</head>
+<!-- /Head -->
+<!-- Body -->
+<body>
+<!-- Loading Container -->
+<div class="loading-container">
+    <div class="loading-progress">
+        <div class="rotator">
+            <div class="rotator">
+                <div class="rotator colored">
+                    <div class="rotator">
+                        <div class="rotator colored">
+                            <div class="rotator colored"></div>
+                            <div class="rotator"></div>
+                        </div>
+                        <div class="rotator colored"></div>
+                    </div>
+                    <div class="rotator"></div>
+                </div>
+                <div class="rotator"></div>
+            </div>
+            <div class="rotator"></div>
+        </div>
+        <div class="rotator"></div>
+    </div>
+</div>
+<!--  /Loading Container -->
+<!-- Navbar -->
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="navbar-container">
+            <!-- Navbar Barnd -->
+            <div class="navbar-header pull-left">
+                <span class="manage-logo">JOB-SERVER管理后台</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Navbar -->
+<!-- Main Container -->
+<div class="main-container container-fluid">
+    <!-- Page Container -->
+    <div class="page-container">
+        <!-- Page Sidebar -->
+        <div class="page-sidebar" id="sidebar">
+            <div class="sidebar-header-wrapper">
+
+            </div>
+            <ul class="nav sidebar-menu">
+                <li class="active open">
+                    <a href="#" class="menu-dropdown">
+                        <i class="menu-icon fa fa-table"></i>
+                        <span class="menu-text"> 任务管理 </span>
+                        <i class="menu-expand"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li class="active">
+                            <a href="${base}monitor/jobList">
+                                <span class="menu-text">任务列表</span>
+                            </a>
+                        </li>
+                        <li class="active">
+                            <a href="${base}monitor/add">
+                                <span class="menu-text">添加任务</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="${base}monitor/monitor">
+                        <i class="menu-icon fa fa-envelope-o"></i>
+                        <span class="menu-text"> 监控 </span>
+                        <i class="menu-expand"></i>
+                    </a>
+                </li>
+            </ul>
+            <!-- /Sidebar Menu -->
+        </div>
+        <!-- /Page Sidebar -->
+        <!-- Page Content -->
+        <div class="page-content">
+            <div class="page-header position-relative">
+                <div class="header-title">
+                    <h1>
+                        任务管理
+                        <small>
+                            <i class="fa fa-angle-right"></i>
+                            任务列表
+                        </small>
+                    </h1>
+                </div>
+                <!--Header Buttons-->
+                <div class="header-buttons">
+                    <a class="sidebar-toggler" href="#">
+                        <i class="fa fa-arrows-h"></i>
+                    </a>
+                    <a class="refresh" id="refresh-toggler" href="">
+                        <i class="glyphicon glyphicon-refresh"></i>
+                    </a>
+                    <a class="fullscreen" id="fullscreen-toggler" href="#">
+                        <i class="glyphicon glyphicon-fullscreen"></i>
+                    </a>
+                </div>
+                <!--Header Buttons End-->
+            </div>
+            <!-- /Page Header -->
+            <!-- Page Body -->
+            <div class="page-body">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <div class="widget">
+                            <div class="widget-header  with-footer">
+                                <span class="widget-caption">任务列表</span>
+                                <div class="param_area widget-caption" style="margin-left:30px;">
+                                    <form id="queryForm" action="${base}monitor/jobList">
+                                        <input type="hidden" name="systemId" id="systemId">
+                                        <span>选择系统:</span>
+                                        <select id="systemOption">
+                                            <option>全部</option>
+                                            <#assign systemId = (param.systemId)!''/>
+                                            <#list systemList as system>
+                                                <option value="${system}"
+                                                <#if systemId == system>selected</#if>
+                                                > ${system}</option>
+                                            </#list>
+                                        </select>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="widget-body">
+
+                                <div class="flip-scroll">
+                                    <table class="table table-bordered table-striped table-condensed flip-content">
+                                        <thead class="flip-content bordered-palegreen">
+                                        <tr>
+                                            <th>任务名称</th>
+                                            <th class="numeric">GROUP</th>
+                                            <th class="numeric">表达式</th>
+                                            <th class="numeric">任务类型</th>
+                                            <th class="numeric">执行的类名称</th>
+                                            <th class="numeric">锁策略</th>
+                                            <th class="numeric">任务状态</th>
+                                            <th>服务器数量</th>
+                                            <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <#list jobList as job>
+                                            <#assign class = "active"/>
+                                            <#if (job.level)??>
+                                                <#switch job.level>
+                                                    <#case 1>
+                                                        <#assign class = "danger"/>
+                                                        <#break>
+                                                            <#case 2>
+                                                                <#assign class = "warning"/>
+                                                                <#break>
+                                                                    <#case 3>
+                                                                        <#assign class = "success"/>
+                                                                        <#break>
+                                                </#switch>
+                                            </#if>
+                                            <tr class="${(class)!''}">
+                                                <td><a href="${base}monitor/jobDetail/${(job.id)!''}">${(job.jobName)!''}</a>
+                                                </td>
+                                                <td>${(job.groupName)!''}</td>
+                                                <td>${(job.cronExpression)!''}</td>
+                                                <td>${(job.jobType)!''}</td>
+                                                <td title="${(job.jobClass)!''}">${(job.jobClass)!''}</td>
+                                                <td>${(job.lockStratergy)!''}</td>
+                                                <td>${(job.statusStr)!''}</td>
+                                                <td>${(job.serverCount)!''}</td>
+                                                <td>
+                                                    <#switch job.status>
+                                                        <#case 3>
+                                                            <#case 1>
+                                                            <a href="#"
+                                                               onclick="pauseJob(this,${(job.id)!''})"
+                                                               class="btn btn-palegreen btn-xs"><i
+                                                                    class="fa fa-edit"></i> 暂停</a>
+                                                            <a href="#"
+                                                               onclick="deleteJob(this,${(job.id)!''})"
+                                                               class="btn btn-danger btn-xs delete"><i
+                                                                    class="fa fa-trash-o"></i>删除</a>
+                                                            <#break>
+                                                                <#case 2>
+                                                                    <a href="#"
+                                                                       onclick="resumeJob(this,${(job.id)!''})"
+                                                                       class="btn btn-palegreen btn-xs"><i
+                                                                            class="fa fa-edit"></i>执行</a>
+                                                                    <a href="#"
+                                                                       onclick="deleteJob(this,${(job.id)!''})"
+                                                                       class="btn btn-danger btn-xs delete"><i
+                                                                            class="fa fa-trash-o"></i>删除</a>
+                                                                    <#break>
+                                                    </#switch>
+                                                    <a href="${base}monitor/edit/${(job.id)!''}"
+                                                       class="btn btn-palegreen btn-xs"><i
+                                                            class="fa fa-edit"></i> 修改</a>
+                                                </td>
+                                            </tr>
+                                        </#list>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Page Body -->
+        </div>
+        <!-- /Page Content -->
+    </div>
+</div>
+<script src="${base}assets/js/jquery-2.0.3.min.js"></script>
+<script src="${base}assets/js/bootstrap.min.js"></script>
+<script src="${base}assets/js/beyond.min.js"></script>
+<script src="${base}assets/js/popMsg.js"></script>
+<script src="${base}assets/js/bootbox/bootbox.js"></script>
+<script>
+    $(function () {
+        $("#systemOption").change(function () {
+            var selectedVal = $(this).children('option:selected').attr("value");
+            $("#systemId").val(selectedVal);
+            $("#queryForm").submit();
+        })
+    })
+    function pauseJob(element, jobId) {
+        bootbox.confirm("确定暂停该任务?", function (result) {
+            if (result) {
+                $(element).button("loading");
+                $.ajax({
+                    url: "${base}monitor/pauseJob",
+                    data: {"jobId": jobId},
+                    type: "POST",
+                    success: function (data) {
+                        if (data.errorCode == 0) {
+                            ShowTip("暂停成功", "success");
+                            location.reload();
+                        } else {
+                            ShowTip("暂停失败", "danger");
+                        }
+                        $(element).button("reset");
+                    },
+                    error: function () {
+                        ShowTip("服务器错误", "danger");
+                        $(element).button("reset");
+                    }
+                })
+            }
+        });
+    }
+    function resumeJob(element, jobId) {
+        bootbox.confirm("确定恢复该任务?", function (result) {
+            if (result) {
+                $(element).button("loading");
+                $.ajax({
+                    url: "${base}monitor/resumeJob",
+                    data: {"jobId": jobId},
+                    type: "POST",
+                    success: function (data) {
+                        if (data.errorCode == 0) {
+                            ShowTip("操作成功", "success");
+                            location.reload();
+                        } else {
+                            ShowTip("恢复失败", "danger");
+                        }
+                        $(element).button("reset");
+                    },
+                    error: function () {
+                        ShowTip("服务器错误", "danger");
+                        $(element).button("reset");
+                    }
+                })
+            }
+        });
+    }
+    function deleteJob(element, jobId) {
+        bootbox.confirm("确定删除该任务?", function (result) {
+            if (result) {
+                $(element).button("loading");
+                $.ajax({
+                    url: "${base}monitor/deleteJob",
+                    data: {"jobId": jobId},
+                    type: "POST",
+                    success: function (data) {
+                        if (data.errorCode == 0) {
+                            ShowTip("操作成功", "success");
+                            location.reload();
+                        } else {
+                            ShowTip("删除失败", "danger");
+                        }
+                        $(element).button("reset");
+                    },
+                    error: function () {
+                        ShowTip("服务器错误", "danger");
+                        $(element).button("reset");
+                    }
+                })
+            }
+        });
+    }
+</script>
+</body>
+</html>

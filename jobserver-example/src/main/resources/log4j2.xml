@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%highlight{%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{3} - %m %rEx{full}%n}" />
+		</Console>
+		<Async name="Async">
+			<AppenderRef ref="Console"/>
+		</Async>
+		<RollingFile  name="RollingFile" fileName="/data/work/runtime/logs/jobserver-example/log.log"
+					  filePattern="/data/work/runtime/logs/jobmaster/%d{yyyy-MM-dd}-%i.log.gz">
+			<PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n"/>
+			<SizeBasedTriggeringPolicy size="20M"/>
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Root level="trace">
+			<AppenderRef ref="Async" />
+		</Root>
+		<root>
+			<level value="ERROR" />
+			<appender-ref ref="Console" />
+		</root>
+		<root level="INFO">
+			<appender-ref ref="Console"/>
+		</root>
+	</Loggers>
+</Configuration>

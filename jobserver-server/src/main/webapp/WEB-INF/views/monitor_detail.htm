@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- Head -->
+<head>
+    <meta charset="utf-8"/>
+    <title>JOB-SERVER|监控日志</title>
+    <meta name="description" content="simple and responsive tables"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="shortcut icon" href="${base}assets/img/favicon.png" type="image/x-icon">
+    <!--Basic Styles-->
+    <link href="${base}assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link id="bootstrap-rtl-link" href="" rel="stylesheet"/>
+    <link href="${base}assets/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="${base}assets/css/weather-icons.min.css" rel="stylesheet"/>
+    <!--Beyond styles-->
+    <link href="${base}assets/css/beyond.min.css" rel="stylesheet"/>
+    <link href="${base}assets/css/demo.min.css" rel="stylesheet"/>
+    <link href="${base}assets/css/typicons.min.css" rel="stylesheet"/>
+    <link href="${base}assets/css/animate.min.css" rel="stylesheet"/>
+    <link id="skin-link" href="" rel="stylesheet" type="text/css"/>
+    <script src="${base}assets/js/skins.min.js"></script>
+    <style type="text/css">
+        .DTTTFooter {
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="loading-container">
+    <div class="loading-progress">
+        <div class="rotator">
+            <div class="rotator">
+                <div class="rotator colored">
+                    <div class="rotator">
+                        <div class="rotator colored">
+                            <div class="rotator colored"></div>
+                            <div class="rotator"></div>
+                        </div>
+                        <div class="rotator colored"></div>
+                    </div>
+                    <div class="rotator"></div>
+                </div>
+                <div class="rotator"></div>
+            </div>
+            <div class="rotator"></div>
+        </div>
+        <div class="rotator"></div>
+    </div>
+</div>
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="navbar-container">
+            <div class="navbar-header pull-left">
+                <span class="manage-logo">JOB-SERVER管理后台</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main-container container-fluid">
+    <div class="page-container">
+        <div class="page-sidebar" id="sidebar">
+            <div class="sidebar-header-wrapper">
+
+            </div>
+            <ul class="nav sidebar-menu">
+                <li class="active open">
+                    <a href="#" class="menu-dropdown">
+                        <i class="menu-icon fa fa-table"></i>
+                        <span class="menu-text"> 任务管理 </span>
+                        <i class="menu-expand"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li>
+                            <a href="${base}monitor/jobList">
+                                <span class="menu-text">任务列表</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="active">
+                    <a href="${base}monitor/monitor">
+                        <i class="menu-icon fa fa-envelope-o"></i>
+                        <span class="menu-text"> 监控 </span>
+                        <i class="menu-expand"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="page-content">
+            <div class="page-header position-relative">
+                <div class="header-title">
+                    <h1>
+                        监控
+                        <small>
+                            <i class="fa fa-angle-right"></i>
+                            日志
+                        </small>
+                    </h1>
+                </div>
+                <div class="header-buttons">
+                    <a class="sidebar-toggler" href="#">
+                        <i class="fa fa-arrows-h"></i>
+                    </a>
+                    <a class="refresh" id="refresh-toggler" href="">
+                        <i class="glyphicon glyphicon-refresh"></i>
+                    </a>
+                    <a class="fullscreen" id="fullscreen-toggler" href="#">
+                        <i class="glyphicon glyphicon-fullscreen"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="page-body">
+                <form id="queryForm" action="${base}monitor/monitor">
+                    <input type="hidden" name="pageNum" id="pageNum" value="${pageNum}">
+                    <input type="hidden" name="pageSize" value="${pageSize}">
+                    <input type="hidden" name="systemId" id="systemId">
+                </form>
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <div class="widget">
+                            <div class="widget-header  with-footer">
+                                <span class="widget-caption">任务日志</span>
+                                <span class="widget-caption"
+                                      style="margin-left: 20px;">jobName:${(job.jobName)!''}</span>
+                                <div class="param_area widget-caption" style="margin-left:30px;">
+                                    <span>选择系统:</span>
+                                    <select id="systemOption">
+                                        <option>全部</option>
+                                        <#assign systemId = (job.systemId)!''/>
+                                        <#list systemList as system>
+                                            <option value="${system}"
+                                            <#if systemId == system>selected</#if>
+                                            > ${system}</option>
+                                        </#list>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="widget-body">
+                                <div class="flip-scroll">
+                                    <table class="table table-bordered table-striped table-condensed flip-content">
+                                        <thead class="flip-content bordered-palegreen">
+                                        <tr>
+                                            <th>任务名称</th>
+                                            <th>UPDATE_TIME</th>
+                                            <th class="numeric">执行时间</th>
+                                            <th class="numeric">结束时间</th>
+                                            <th class="numeric">执行情况</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <#list logInfo as log>
+                                            <#assign class="success"/>
+                                            <#if !log.success>
+                                                <#assign class="danger"/>
+                                            </#if>
+                                            <tr class="${(class)!''}">
+                                                <td>${(log.jobName)!''}</td>
+                                                <td>${(log.updateTime)!''}</td>
+                                                <td>${(log.startTime)!''}</td>
+                                                <td>${(log.endTime)!''}</td>
+                                                <td>
+                                                    <#if log.success>成功
+                                                        <#else>失败
+                                                    </#if>
+                                                </td>
+                                            </tr>
+                                        </#list>
+                                        </tbody>
+                                    </table>
+                                    <#if total gt 1>
+                                        <div class="row DTTTFooter">
+                                            <div class="dataTables_paginate paging_bootstrap"
+                                                 id="expandabledatatable_paginate">
+                                                <ul class="pagination">
+                                                    <#if pageNum lte 1>
+                                                        <li class="prev disabled"><a href="#">Prev</a></li>
+                                                        <#else>
+                                                            <li class="prev">
+                                                                <a href="#" onclick="page(${pageNum}-1)">Prev</a>
+                                                            </li>
+                                                    </#if>
+                                                    <#assign startNum = 1/>
+                                                    <#assign endNum = total/>
+                                                    <#if total gt 10>
+                                                        <#if pageNum gt 1>
+                                                            <#assign startNum = pageNum - 1/>
+                                                        </#if>
+                                                        <#assign endNum = startNum +20/>
+                                                        <#if endNum gt total>
+                                                            <#assign endNum = total/>
+                                                            <#assign startNum = endNum - 20/>
+                                                        </#if>
+                                                        <#if startNum lt 1>
+                                                            <#assign startNum = 1/>
+                                                        </#if>
+                                                    </#if>
+                                                    <#list startNum..endNum as i>
+                                                        <#if i == pageNum>
+                                                            <li class="active"><a href="#"
+                                                                                  onclick="page(${i})">${i}</a></li>
+                                                            <#else>
+                                                                <li><a href="#" onclick="page(${i})">${i}</a></li>
+                                                        </#if>
+                                                    </#list>
+                                                    <#if pageNum lt endNum>
+                                                        <li class="next"><a href="#"
+                                                                            onclick="page(${pageNum+1})">Next</a>
+                                                        </li>
+                                                        <#else>
+                                                            <li class="next disabled"><a href="#">Next</a></li>
+                                                    </#if>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </#if>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${base}assets/js/jquery-2.0.3.min.js"></script>
+<script src="${base}assets/js/bootstrap.min.js"></script>
+<script src="${base}assets/js/beyond.min.js"></script>
+<script src="${base}assets/js/popMsg.js"></script>
+<script src="${base}assets/js/bootbox/bootbox.js"></script>
+<script>
+    $(function () {
+        $("#systemOption").change(function () {
+            var selectedVal = $(this).children('option:selected').attr("value");
+            $("#systemId").val(selectedVal);
+            $("#queryForm").submit();
+        })
+    })
+    function page(pageSize) {
+        $("#pageNum").val(pageSize);
+        $("#queryForm").submit();
+    }
+</script>
+</body>
+</html>

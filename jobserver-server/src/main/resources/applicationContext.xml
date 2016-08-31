@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+    <bean class="com.weimob.jobserver.server.utils.SpringContextHolder" id="springContextUtil"/>
+    <import resource="classpath*:applicationContext.jobserver.redis.xml"/>
+    <context:component-scan base-package="com.weimob.jobserver.server"/>
+    <context:annotation-config/>
+    <tx:annotation-driven/>
+    <task:annotation-driven/>
+    <bean class="com.weimob.soa.configcenter.WccPropertyPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>dataSource_jobserver.properties</value>
+                <value>jobserver.properties</value>
+                <value>dubbo_jobserver.properties</value>
+            </list>
+        </property>
+        <property name="applicationName" value="weimob.im-job-server"/>
+    </bean>
+    <bean id="jobScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"/>
+    <bean class="com.weimob.jobserver.core.job.dynamic.DynamicJobManager">
+        <constructor-arg ref="jobScheduler"/>
+    </bean>
+    <bean id="zookeeperConfiguration" class="com.weimob.jobserver.core.zk.ZookeeperConfiguration">
+        <property name="serverLists" value="${zookeeper.address}"/>
+        <property name="namespace" value="${zookeeper.defaultNamespace}"/>
+    </bean>
+    <bean class="com.weimob.jobserver.core.zk.ZookeeperRegistryCenter" init-method="init">
+        <constructor-arg name="zkConfig" ref="zookeeperConfiguration"/>
+    </bean>
+    <bean id="dataSource_jobserver" class="com.weimob.arch.wdd.datasource.DynamicDataSource"/>
+    <!-- MyBatis begin -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource_jobserver"/>
+        <property name="typeAliasesPackage" value="com.weimob.jobserver.server.job"/>
+        <property name="mapperLocations" value="classpath:/mappers/**/*.xml"/>
+        <property name="configLocation" value="classpath:/mybatis-config.xml"></property>
+    </bean>
+    <!-- 扫描basePackage下所有的接口 -->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <property name="basePackage" value="com.weimob.jobserver.server.job"/>
+    </bean>
+    <!-- 定义事务 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource_jobserver"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+    <!-- 异步线程池 -->
+    <bean id="taskExecutor"
+          class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <!-- 核心线程数 -->
+        <property name="corePoolSize" value="4"/>
+        <!-- 最大线程数 -->
+        <property name="maxPoolSize" value="20"/>
+        <!-- 队列最大长度 >=mainExecutor.maxSize -->
+        <property name="queueCapacity" value="1000"/>
+        <!-- 线程池维护线程所允许的空闲时间 -->
+        <property name="keepAliveSeconds" value="300"/>
+        <!-- 线程池对拒绝任务(无线程可用)的处理策略 -->
+        <property name="rejectedExecutionHandler">
+            <bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy"/>
+        </property>
+    </bean>
+</beans>
